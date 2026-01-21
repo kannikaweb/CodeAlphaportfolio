@@ -1,59 +1,84 @@
-/* ================= TYPING EFFECT ================= */
-const text = "Frontend Developer";
-let i = 0;
-const typing = document.getElementById("typing");
+/* Typing Effect with Color */
+const typingEl = document.querySelector(".typing");
+const texts = ["Frontend Developer","UI Designer","Web Developer"];
+let i = 0, j = 0;
 
-function typeEffect() {
-  if (i < text.length) {
-    typing.textContent += text.charAt(i);
-    i++;
-    setTimeout(typeEffect, 90);
+function type(){
+  if(j < texts[i].length){
+    typingEl.textContent += texts[i][j++];
+    typingEl.style.color = `hsl(${Math.random()*360},100%,80%)`;
+    setTimeout(type,120);
+  }else{
+    setTimeout(erase,1500);
   }
 }
-
-typeEffect();
-
-/* ================= SCROLL REVEAL ================= */
-const reveals = document.querySelectorAll(".reveal");
-const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll("nav a");
-
-function revealOnScroll() {
-  const windowHeight = window.innerHeight;
-
-  reveals.forEach((el) => {
-    const elementTop = el.getBoundingClientRect().top;
-    if (elementTop < windowHeight - 120) {
-      el.classList.add("active");
-    }
-  });
+function erase(){
+  if(j>0){
+    typingEl.textContent = texts[i].substring(0,--j);
+    setTimeout(erase,80);
+  }else{
+    i=(i+1)%texts.length;
+    setTimeout(type,300);
+  }
 }
+window.onload = type;
 
-/* ================= ACTIVE NAV ================= */
-function activateNav() {
-  let current = "";
-
-  sections.forEach((section) => {
-    if (window.scrollY >= section.offsetTop - 160) {
-      current = section.getAttribute("id");
-    }
+/* Scroll active */
+const sections=document.querySelectorAll("section");
+const navLinks=document.querySelectorAll(".nav-link");
+window.addEventListener("scroll",()=>{
+  let cur="";
+  sections.forEach(sec=>{
+    if(scrollY>=sec.offsetTop-150) cur=sec.id;
   });
-
-  navLinks.forEach((link) => {
-    link.classList.remove("active");
-    if (link.getAttribute("href") === "#" + current) {
-      link.classList.add("active");
-    }
+  navLinks.forEach(l=>{
+    l.classList.toggle("active",l.getAttribute("href")==="#"+cur);
   });
-}
-
-/* ================= EVENTS ================= */
-window.addEventListener("scroll", () => {
-  revealOnScroll();
-  activateNav();
 });
 
-/* Trigger once on load */
-revealOnScroll();
-activateNav();
+/* Cursor glow */
+const glow=document.querySelector(".cursor-glow");
+document.addEventListener("mousemove",e=>{
+  glow.style.left=e.clientX+"px";
+  glow.style.top=e.clientY+"px";
+});
 
+/* Internship */
+
+function readMore(){
+  const text = document.getElementById("internText");
+  const btn = event.target;
+
+  if(text.classList.contains("short")){
+    text.classList.remove("short");
+    text.classList.add("full");
+    btn.innerText = "Read Less";
+  } else {
+    text.classList.remove("full");
+    text.classList.add("short");
+    btn.innerText = "Read More";
+  }
+
+}
+
+/* Certificate Modal */
+function openCert(title){
+  document.getElementById("certTitle").innerText=title;
+  document.getElementById("certModal").classList.add("active");
+}
+function closeCert(){
+  document.getElementById("certModal").classList.remove("active");
+}
+/* ===============================
+   SEND MESSAGE → DIRECT MAIL
+================================ */
+function sendMail(e){
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const message = document.getElementById("message").value;
+
+  const mailtoLink = `mailto:kannikam.cse@gmail.com?subject=Message from ${encodeURIComponent(name)}&body=${encodeURIComponent(message)}`;
+
+  window.location.href = mailtoLink;
+}
